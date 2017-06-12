@@ -11,7 +11,7 @@ view model =
       , div [ id "products" ] []
       , node "script" [ id "template", type_ "text/x-handlebars-template" ]
           [ div [ class "grid" ]
-              [ text "{{#each products}}        "
+              [ text "{{#each products}}"
               , div [ class "grid-item" ]
                   [ img [ attribute "height" "{{image.sizes.Large.actualHeight}}", src "{{image.sizes.Large.url}}" ]
                       []
@@ -22,7 +22,7 @@ view model =
                   , div [ class "price" ]
                       [ text "{{#if salePrice}} ${{salePrice}} on sale, originally{{/if}} ${{price}}" ]
                   ]
-              , text "{{/each}}      "
+              , text "{{/each}}"
               ]
           ]
       ]

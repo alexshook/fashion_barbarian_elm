@@ -8225,7 +8225,7 @@ var _user$project$Index$view = function (model) {
 											},
 											{
 												ctor: '::',
-												_0: _elm_lang$html$Html$text('{{#each products}}        '),
+												_0: _elm_lang$html$Html$text('{{#each products}}'),
 												_1: {
 													ctor: '::',
 													_0: A2(
@@ -8294,7 +8294,7 @@ var _user$project$Index$view = function (model) {
 														}),
 													_1: {
 														ctor: '::',
-														_0: _elm_lang$html$Html$text('{{/each}}      '),
+														_0: _elm_lang$html$Html$text('{{/each}}'),
 														_1: {ctor: '[]'}
 													}
 												}
