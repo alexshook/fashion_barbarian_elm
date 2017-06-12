@@ -1,0 +1,105 @@
+var _truqu$elm_mustache$Mustache$oneOf = function (maybes) {
+	oneOf:
+	while (true) {
+		var _p0 = maybes;
+		if (_p0.ctor === '[]') {
+			return _elm_lang$core$Maybe$Nothing;
+		} else {
+			var _p2 = _p0._0;
+			var _p1 = _p2;
+			if (_p1.ctor === 'Nothing') {
+				var _v2 = _p0._1;
+				maybes = _v2;
+				continue oneOf;
+			} else {
+				return _p2;
+			}
+		}
+	}
+};
+var _truqu$elm_mustache$Mustache$head_ = function (xs) {
+	return A2(
+		_elm_lang$core$Maybe$withDefault,
+		'',
+		A2(
+			_elm_lang$core$Maybe$withDefault,
+			_elm_lang$core$Maybe$Nothing,
+			_elm_lang$core$List$head(xs)));
+};
+var _truqu$elm_mustache$Mustache$getSection = F2(
+	function (nodes, match) {
+		var val = _truqu$elm_mustache$Mustache$head_(
+			A2(
+				_elm_lang$core$Maybe$withDefault,
+				{ctor: '[]'},
+				_elm_lang$core$List$tail(match.submatches)));
+		var key = _truqu$elm_mustache$Mustache$head_(match.submatches);
+		var expand = function (node) {
+			var _p3 = node;
+			if (_p3.ctor === 'Section') {
+				return _elm_lang$core$Native_Utils.eq(_p3._0, key) ? _p3._1 : false;
+			} else {
+				return false;
+			}
+		};
+		return A2(_elm_lang$core$List$any, expand, nodes) ? val : '';
+	});
+var _truqu$elm_mustache$Mustache$getVariable = F2(
+	function (nodes, match) {
+		var key = _truqu$elm_mustache$Mustache$head_(match.submatches);
+		var getContent = function (node) {
+			var _p4 = node;
+			if (_p4.ctor === 'Variable') {
+				return _elm_lang$core$Native_Utils.eq(key, _p4._0) ? _elm_lang$core$Maybe$Just(_p4._1) : _elm_lang$core$Maybe$Nothing;
+			} else {
+				return _elm_lang$core$Maybe$Nothing;
+			}
+		};
+		return A2(
+			_elm_lang$core$Maybe$withDefault,
+			'',
+			_truqu$elm_mustache$Mustache$oneOf(
+				A2(_elm_lang$core$List$map, getContent, nodes)));
+	});
+var _truqu$elm_mustache$Mustache$renderVariables = F2(
+	function (nodes, template) {
+		var r = _elm_lang$core$Regex$regex('{{\\s?(.+?)\\s?}}');
+		return A4(
+			_elm_lang$core$Regex$replace,
+			_elm_lang$core$Regex$All,
+			r,
+			_truqu$elm_mustache$Mustache$getVariable(nodes),
+			template);
+	});
+var _truqu$elm_mustache$Mustache$renderSections = F2(
+	function (nodes, template) {
+		var r = _elm_lang$core$Regex$regex('{{#\\s?(.+?)\\s?}}(.+?){{/\\s?\\1\\s?}}');
+		return A4(
+			_elm_lang$core$Regex$replace,
+			_elm_lang$core$Regex$All,
+			r,
+			_truqu$elm_mustache$Mustache$getSection(nodes),
+			template);
+	});
+var _truqu$elm_mustache$Mustache$render = F2(
+	function (nodes, template) {
+		return A2(
+			_truqu$elm_mustache$Mustache$renderVariables,
+			nodes,
+			A2(_truqu$elm_mustache$Mustache$renderSections, nodes, template));
+	});
+var _truqu$elm_mustache$Mustache$Section = F2(
+	function (a, b) {
+		return {ctor: 'Section', _0: a, _1: b};
+	});
+var _truqu$elm_mustache$Mustache$Variable = F2(
+	function (a, b) {
+		return {ctor: 'Variable', _0: a, _1: b};
+	});
+var _truqu$elm_mustache$Mustache$Section_ = F2(
+	function (a, b) {
+		return {ctor: 'Section_', _0: a, _1: b};
+	});
+var _truqu$elm_mustache$Mustache$Variable_ = function (a) {
+	return {ctor: 'Variable_', _0: a};
+};
