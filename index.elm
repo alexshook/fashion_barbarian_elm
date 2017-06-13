@@ -2,7 +2,57 @@ module Index exposing (..)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
+import Http
+import Json.Decode as Decode
 
+type alias Model =
+  { trend : String }
+init : (Model, Cmd Msg)
+init =
+  (Model "safari", Cmd.none)
+
+type Msg
+  = TrendyProducts
+  | MoreProducts (Result Http.Error Metadata)
+update : Msg -> Model -> (Model, Cmd Msg)
+update msg model =
+  case msg of
+    TrendyProducts ->
+      (model, getTrendyProducts model.trend)
+
+    MoreProducts (Ok newTrend) ->
+      ({ model | trend = newTrend }, Cmd.none)
+
+    MoreProducts (Err _) ->
+      (model, Cmd.none)
+
+getTrendyProducts : Http.Request Metadata
+getTrendyProducts =
+  Http.get "https://calm-beach-60805.herokuapp.com/" decodeMetadata
+
+type alias Metadata =
+  { clickUrl : String
+  , brandedName : String
+  , price : String
+  , salePrice : String
+  }
+
+decodeMetadata : Decode.Decoder Metadata
+decodeMetadata =
+  Decode.map4 Metadata
+    (Decode.field "clickUrl" Decode.string)
+    (Decode.field "brandedName" Decode.string)
+    (Decode.field "price" Decode.string)
+    (Decode.field "salePrice" Decode.string)
+
+send : Cmd Msg
+send =
+  Http.send MoreProducts Metadata
+
+
+
+
+view : Model -> Html Msg
 view model =
   div [ class "slim centered" ]
     [ div [ class "right-align" ]
@@ -28,5 +78,5 @@ view model =
       ]
     ]
 
-main =
-  view "dummy model"
+--main =
+--  view "dummy model"
