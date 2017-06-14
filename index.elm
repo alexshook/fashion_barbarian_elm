@@ -5,51 +5,57 @@ import Html.Attributes exposing (..)
 import Http
 import Json.Decode as Decode
 
-type alias Model =
-  { trend : String }
-init : (Model, Cmd Msg)
-init =
-  (Model "safari", Cmd.none)
+main =
+  Html.program
+    { init = init "safari"
+    , view = view
+    , update = update
+    }
 
-type Msg
-  = TrendyProducts
-  | MoreProducts (Result Http.Error Metadata)
+
+-- MODEL
+
+
+type alias Model =
+  { trend : String
+  , products : String Product
+  }
+
+init : (Model, Cmd Msg)
+init trend =
+  (Model trend getMoreProducts, Cmd.none)
+
+type alias Product =
+  { brandedName : String
+  , clickUrl : String
+  , price : String
+  , salePrice : String
+  , imageUrl : String
+  , imageHeight : Int
+  }
+
+
+-- UPDATE
+
+
+type Msg = 
+  TrendyProducts
+  | GetProducts (Result Http.Error String)
+
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
     TrendyProducts ->
-      (model, getTrendyProducts model.trend)
+      (model, getMoreProducts model.trend)
 
-    MoreProducts (Ok newTrend) ->
-      ({ model | trend = newTrend }, Cmd.none)
+    GetProducts (Ok newProducts) ->
+      ( { model | products = newProducts}, Cmd.none)
 
-    MoreProducts (Err _) ->
+    GetProducts (Err _) ->
       (model, Cmd.none)
 
-getTrendyProducts : Http.Request Metadata
-getTrendyProducts =
-  Http.get "https://calm-beach-60805.herokuapp.com/" decodeMetadata
 
-type alias Metadata =
-  { clickUrl : String
-  , brandedName : String
-  , price : String
-  , salePrice : String
-  }
-
-decodeMetadata : Decode.Decoder Metadata
-decodeMetadata =
-  Decode.map4 Metadata
-    (Decode.field "clickUrl" Decode.string)
-    (Decode.field "brandedName" Decode.string)
-    (Decode.field "price" Decode.string)
-    (Decode.field "salePrice" Decode.string)
-
-send : Cmd Msg
-send =
-  Http.send MoreProducts Metadata
-
-
+-- VIEW
 
 
 view : Model -> Html Msg
@@ -78,5 +84,24 @@ view model =
       ]
     ]
 
---main =
---  view "dummy model"
+
+-- HTTP
+
+
+getMoreProducts : String -> Cmd Msg
+getMoreProducts trend =
+  let
+    url =
+      "https://calm-beach-60805.herokuapp.com/"
+  in
+    Http.send GetProducts (Http.get url productDecoder)
+
+productDecoder =
+  Decode.map6
+    Product
+      (Decode.at [ "brandedName" ] Decode.string)
+      (Decode.at [ "clickUrl" ] Decode.string)
+      (Decode.at [ "price" ] Decode.string)
+      (Decode.at [ "salePrice" ] Decode.string)
+      (Decode.at [ "imageUrl" ] Decode.string)
+      (Decode.at [ "imageHeight" ] Decode.int)

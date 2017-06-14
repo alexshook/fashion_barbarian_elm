@@ -162,5 +162,27 @@ var _user$project$Index$view = function (model) {
 			_1: {ctor: '[]'}
 		});
 };
-var _user$project$Index$main = _elm_lang$virtual_dom$Native_VirtualDom.staticProgram(
-	_user$project$Index$view('dummy model'));
+var _user$project$Index$Model = function (a) {
+	return {trend: a};
+};
+var _user$project$Index$init = {
+	ctor: '_Tuple2',
+	_0: _user$project$Index$Model('safari'),
+	_1: _elm_lang$core$Platform_Cmd$none
+};
+var _user$project$Index$Metadata = F4(
+	function (a, b, c, d) {
+		return {clickUrl: a, brandedName: b, price: c, salePrice: d};
+	});
+var _user$project$Index$decodeMetadata = A5(
+	_elm_lang$core$Json_Decode$map4,
+	_user$project$Index$Metadata,
+	A2(_elm_lang$core$Json_Decode$field, 'clickUrl', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode$field, 'brandedName', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode$field, 'price', _elm_lang$core$Json_Decode$string),
+	A2(_elm_lang$core$Json_Decode$field, 'salePrice', _elm_lang$core$Json_Decode$string));
+var _user$project$Index$getTrendyProducts = A2(_elm_lang$http$Http$get, 'https://calm-beach-60805.herokuapp.com/', _user$project$Index$decodeMetadata);
+var _user$project$Index$TrendyProducts = function (a) {
+	return {ctor: 'TrendyProducts', _0: a};
+};
+var _user$project$Index$send = A2(_elm_lang$http$Http$send, _user$project$Index$TrendyProducts, _user$project$Index$getTrendyProducts);
